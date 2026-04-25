@@ -1,3 +1,5 @@
+import time
+from sqlite3 import OperationalError
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
@@ -23,7 +25,20 @@ SessionLocal = sessionmaker(
     autocommit=False,
 )
 
+def wait_for_db(max_attempts=30, wait_seconds=2):
+    for attempt in range(1, max_attempts + 1):
+        try:
+            db_engine.connect()
+            print(f'Подключение к MySQL успешно (попытка {attempt})')
+            return
+        except OperationalError:
+            print(f'MySQL ещё не готов, попытка {attempt}/{max_attempts}...')
+            time.sleep(wait_seconds)
+    raise Exception('MySQL не стал доступен после ожидания')
+
+
 def create_tables():
+    wait_for_db()
     Base.metadata.create_all(bind=db_engine)
     log.info('Таблцы созданы в БД')
 
