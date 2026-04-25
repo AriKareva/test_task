@@ -1,11 +1,11 @@
 from task.schemas import TaskCreate, TaskUpdate
 from task.models import Task
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session
 
 
 class TaskRepository:
-    def __init__(self, db: AsyncSession):
+    def __init__(self, db: Session):
         self.db = db
 
     def get(self, task_id: int) -> Task | None:

@@ -8,14 +8,14 @@ from fastapi import APIRouter, Depends
 router = APIRouter(prefix='/user', tags=['user'])
 
 @router.get('/', response_model=List[UserResponse])
-def get_tasks(
+def get_users(
     # user_id: int,
     manager: UserManager = Depends(get_user_manager)
 ):
     return manager.list_users()
 
 @router.get('/{task_id}', response_model=UserResponse)
-def get_task(
+def get_user(
     user_id: int,
     manager: UserManager = Depends(get_user_manager)
 ):
@@ -23,7 +23,7 @@ def get_task(
     
 
 @router.post('/', response_model=UserResponse)
-def create_task(
+def create_user(
     user_data: UserCreate,
     manager: UserManager = Depends(get_user_manager)
 ):
@@ -31,7 +31,7 @@ def create_task(
 
 
 @router.patch('/{task_id}', response_model=UserResponse)
-def update_task(
+def update_user(
     updates: UserUpdate,
     user_id: int,
     manager: UserManager = Depends(get_user_manager)
@@ -40,7 +40,7 @@ def update_task(
 
 
 @router.delete('/{task_id}', response_model=UserResponse)
-def delete_task(
+def delete_user(
     user_id: int,
     manager: UserManager = Depends(get_user_manager)
 ):

@@ -11,7 +11,7 @@ class TaskManager:
     def get_task(self, task_id: int) -> TaskResponse:
         task = self.rep.get(task_id=task_id)
         if not task:
-            raise HTTPException(status_code=status.HTTH_404_NOT_FOUND, detail=f'Задача с id={task_id} не найдена')
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Задача с id={task_id} не найдена')
         return task
 
     def list_tasks(self) -> List[TaskResponse]:
@@ -25,13 +25,13 @@ class TaskManager:
     def delete_task(self, task_id: int) -> TaskResponse:
         deleted_task = self.rep.delete(task_id=task_id)
         if not deleted_task:
-            raise HTTPException(status_code=status.HTTH_404_NOT_FOUND, detail=f'Задача с id={task_id} не найдена')
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Задача с id={task_id} не найдена')
         return deleted_task
 
     def update_task(self, task_id: int, task_updates: TaskUpdate) -> TaskResponse:
         updated_task = self.rep.update(task_id=task_id, updates=task_updates)
         if not updated_task:
-            raise HTTPException(status_code=status.HTTH_404_NOT_FOUND, detail=f'Задача с id={task_id} не найдена')
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Задача с id={task_id} не найдена')
         return updated_task
 
 

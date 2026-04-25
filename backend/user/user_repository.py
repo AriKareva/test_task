@@ -1,11 +1,11 @@
 from user.models import User
 from user.schemas import UserCreate, UserUpdate
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session
 
 
 class UserRepository:
-    def __init__(self, db: AsyncSession):
+    def __init__(self, db: Session):
         self.db = db
 
     def get(self, user_id: int) -> User | None:

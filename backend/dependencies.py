@@ -1,3 +1,5 @@
+from task.task_repository import TaskRepository
+from user.user_repository import UserRepository
 from database.connection import SessionLocal
 from user.user_manager import UserManager
 from task.task_manager import TaskManager
@@ -10,7 +12,9 @@ def get_db() -> Session:
         yield db
 
 def get_task_manager(db: Session = Depends(get_db)) -> TaskManager:
-    return TaskManager(db)
+    rep = TaskRepository(db)
+    return TaskManager(rep)
 
 async def get_user_manager(db: Session = Depends(get_db)) -> UserManager:
-    return UserManager(db)
+    rep = UserRepository(db)
+    return UserManager(rep)
