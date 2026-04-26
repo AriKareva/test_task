@@ -48,3 +48,11 @@ class UserRepository:
         self.db.refresh(task)
         return task
 
+    def get_user_by_login(self, user_login: str) -> User | None:
+        user = self.db.query(User).filter(User.login == user_login).first()
+        return user
+    
+    def get_user_by_email(self, user_email: str) -> User | None:
+        user = self.db.query(User).filter(User.email == user_email).first()
+        return user
+    
