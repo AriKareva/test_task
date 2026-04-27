@@ -1,0 +1,237 @@
+/* Reset */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  color: #1e293b;
+  background: #f1f5f9;
+  line-height: 1.5;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+/* Layout */
+.app-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+.app-main {
+  flex: 1;
+  padding: 16px 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Header */
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+  background: #fff;
+  border-bottom: 1px solid #e2e8f0;
+}
+.app-header__nav {
+  display: flex;
+  gap: 16px;
+}
+.app-header__nav a {
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+.app-header__nav a:hover {
+  background: #f1f5f9;
+}
+.app-header__auth {
+  display: flex;
+  align-items: center;
+}
+
+/* User menu */
+.user-menu {
+  position: relative;
+}
+.user-menu__toggle {
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 6px;
+  background: #f1f5f9;
+}
+.user-menu__dropdown {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 4px);
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  min-width: 120px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.04);
+  z-index: 100;
+}
+.user-menu__dropdown button {
+  width: 100%;
+  text-align: left;
+  padding: 8px 12px;
+}
+.user-menu__dropdown button:hover {
+  background: #f8fafc;
+}
+
+/* Auth forms */
+.auth-form {
+  max-width: 360px;
+  margin: 32px auto;
+  padding: 24px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.auth-form h1 {
+  margin-bottom: 16px;
+  text-align: center;
+}
+.auth-form input {
+  width: 100%;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 15px;
+}
+.auth-form input:focus {
+  outline: none;
+  border-color: #6366f1;
+}
+.error-message {
+  color: #ef4444;
+  font-size: 13px;
+  margin-top: -8px;
+  margin-bottom: 8px;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+.btn--primary {
+  background: #6366f1;
+  color: #fff;
+}
+.btn--primary:hover {
+  background: #4f46e5;
+}
+.btn--secondary {
+  background: #e2e8f0;
+  color: #1e293b;
+}
+.btn--secondary:hover {
+  background: #cbd5e1;
+}
+
+/* Kanban */
+.kanban-board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 16px;
+}
+.kanban-column {
+  background: #fff;
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+.kanban-column__title {
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.kanban-column__list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Task card */
+.task-card {
+  background: #f8fafc;
+  border-radius: 6px;
+  padding: 10px;
+  border: 1px solid #e2e8f0;
+}
+.task-card__title {
+  font-weight: 600;
+}
+.task-card__description {
+  font-size: 14px;
+  color: #475569;
+}
+.task-card__meta {
+  font-size: 12px;
+  color: #64748b;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+}
+.task-card__actions {
+  margin-top: 8px;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 200;
+}
+.modal {
+  background: #fff;
+  border-radius: 8px;
+  padding: 24px;
+  max-width: 460px;
+  width: 90%;
+  position: relative;
+}
+.modal__close {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  font-size: 20px;
+  color: #64748b;
+}
+
+/* Utilities */
+.mt-16 { margin-top: 16px; }
+.text-center { text-align: center; }
+
+/* Loading */
+.loading {
+  text-align: center;
+  padding: 32px;
+  color: #64748b;
+}
