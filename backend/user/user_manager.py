@@ -51,7 +51,7 @@ class UserManager:
             raise HTTPException(status_code=status.HTTH_404_NOT_FOUND, detail=f'Пользователь с login={user_data.login} не найден')
         
         pass_verified = verify_password(user_data.password, user.password)
-        if pass_verified:
+        if not pass_verified:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Неверный пароль')
         
         token = create_access_token(user_id=user.user_id, login=user.login)

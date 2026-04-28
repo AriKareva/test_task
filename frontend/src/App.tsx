@@ -6,7 +6,7 @@ import ProtectedRoute from './shared/components/ProtectedRoute';
 
 const AllTasksPage = lazy(() => import('./pages/AllTasksPage'));
 const MyTasksPage = lazy(() => import('./pages/MyTasksPage'));
-const AnalyticsPage = lazy(() => import('./pages/AnalyticsPage'));
+// const AnalyticsPage = lazy(() => import('./pages/AnalyticsPage'));s
 const LoginPage = lazy(() => import('./pages/LoginPage'));
 const RegisterPage = lazy(() => import('./pages/RegisterPage'));
 

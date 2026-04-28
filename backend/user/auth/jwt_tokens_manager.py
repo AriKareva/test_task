@@ -15,7 +15,7 @@ def create_access_token(user_id: int, login: str) -> AccessTokenResponse:
     }
 
     token = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
-    return AccessTokenResponse(access_token=token)
+    return AccessTokenResponse(access_token=token, login=login, user_id=user_id)
 
 
 def decode_access_token(token: str) -> AccessTokenPayload | None:

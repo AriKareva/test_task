@@ -10,7 +10,7 @@ class TaskRepository:
         self.db = db
 
     def get(self, task_id: int) -> Task | None:
-        task = self.db.query(Task).filter(Task.task_id == task_id)
+        task = self.db.query(Task).filter(Task.task_id == task_id).first()
         return task
 
     def list(self) -> List[Task]:

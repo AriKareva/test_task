@@ -1,4 +1,28 @@
 set names utf8mb4;
+SET FOREIGN_KEY_CHECKS = 0;
+
+-- Очистка таблиц в правильном порядке (из-за внешних ключей)
+DELETE FROM statuses;
+DELETE FROM priorities;
+DELETE FROM users;
+DELETE FROM task_file;
+DELETE FROM task_status;
+DELETE FROM task_priority;
+DELETE FROM task_assignee;
+DELETE FROM tasks;
+
+
+-- Сброс автоинкремента
+ALTER TABLE users AUTO_INCREMENT = 1;
+ALTER TABLE priorities AUTO_INCREMENT = 1;
+ALTER TABLE statuses AUTO_INCREMENT = 1;
+ALTER TABLE tasks AUTO_INCREMENT = 1;
+ALTER TABLE task_assignee AUTO_INCREMENT = 1;
+ALTER TABLE task_priority AUTO_INCREMENT = 1;
+ALTER TABLE task_status AUTO_INCREMENT = 1;
+ALTER TABLE task_file AUTO_INCREMENT = 1;
+
+
 drop table if exists users;
 create table users (
     user_id bigint primary key auto_increment,
@@ -72,3 +96,83 @@ create table task_file (
 
     foreign key (task_id) references tasks(task_id) on delete cascade on update cascade
 );
+
+-- ============================================
+-- Мок-данные для сервиса задач
+-- Совместимо с MySQL 8.0, кодировка utf8mb4
+-- ============================================
+
+-- ================== ПОЛЬЗОВАТЕЛИ ==================
+INSERT INTO users (login, password, email, reg_dt) VALUES
+('alice',   '$argon2id$v=19$m=65536,t=3,p=4$...$...', 'alice@example.com', '2026-04-01 10:00:00'),
+('bob',     '$argon2id$v=19$m=65536,t=3,p=4$...$...', 'bob@example.com',   '2026-04-02 11:00:00'),
+('charlie', '$argon2id$v=19$m=65536,t=3,p=4$...$...', 'charlie@example.com','2026-04-03 12:00:00'),
+('diana',   '$argon2id$v=19$m=65536,t=3,p=4$...$...', 'diana@example.com', '2026-04-04 09:30:00');
+
+-- ================== СТАТУСЫ ==================
+INSERT INTO statuses (status_title) VALUES
+('Создана'),
+('В работе'),
+('Выполнена'),
+('Закрыта');
+
+-- ================== ПРИОРИТЕТЫ ==================
+INSERT INTO priorities (priority_title) VALUES
+('Низкий'),
+('Средний'),
+('Высокий'),
+('Критичный');
+
+-- ================== ЗАДАЧИ ==================
+INSERT INTO tasks (task_title, description, author_id) VALUES
+('Разработать API аутентификации', 'Реализовать JWT-токены и эндпоинты login/signup', 1),
+('Сверстать главную страницу', 'Адаптивная вёрстка с использованием React и CSS Grid', 2),
+('Настроить CI/CD', 'Написать пайплайн для автодеплоя на сервер', 1),
+('Рефакторинг модуля задач', 'Улучшить структуру кода и добавить тесты', 3),
+('Подготовить документацию', 'Описать API в Swagger', 2);
+
+-- ================== ИСПОЛНИТЕЛИ (текущие/исторические) ==================
+-- Для каждой задачи добавляем текущего исполнителя и предысторию
+INSERT INTO task_assignee (task_id, assignee_id, assignee_dt) VALUES
+-- Задача 1: сначала взял Bob, потом передал Charlie
+(1, 2, '2026-04-05 10:00:00'),
+(1, 3, '2026-04-07 14:00:00'),
+-- Задача 2: выполняет Alice
+(2, 1, '2026-04-06 09:00:00'),
+-- Задача 3: взял Charlie, потом вернул Bob'у
+(3, 3, '2026-04-08 11:00:00'),
+(3, 2, '2026-04-10 16:00:00'),
+-- Задача 4: выполняет Diana
+(4, 4, '2026-04-09 12:00:00'),
+-- Задача 5: выполняет Alice
+(5, 1, '2026-04-11 08:00:00');
+
+-- ================== ИСТОРИЯ ПРИОРИТЕТОВ ==================
+INSERT INTO task_priority (task_id, priority_id, priority_dt) VALUES
+(1, 3, '2026-04-05 10:00:00'), -- Высокий
+(1, 2, '2026-04-07 14:00:00'), -- Средний
+(2, 2, '2026-04-06 09:00:00'), -- Средний
+(3, 4, '2026-04-08 11:00:00'), -- Критичный
+(3, 3, '2026-04-10 16:00:00'), -- Высокий
+(4, 1, '2026-04-09 12:00:00'), -- Низкий
+(5, 3, '2026-04-11 08:00:00'); -- Высокий
+
+-- ================== ИСТОРИЯ СТАТУСОВ ==================
+INSERT INTO task_status (task_id, status_id, status_dt) VALUES
+(1, 1, '2026-04-05 10:00:00'), -- Создана
+(1, 2, '2026-04-06 15:00:00'), -- В работе
+(2, 1, '2026-04-06 09:00:00'), -- Создана
+(2, 2, '2026-04-07 11:00:00'), -- В работе
+(2, 3, '2026-04-10 17:00:00'), -- Выполнена
+(3, 1, '2026-04-08 11:00:00'), -- Создана
+(3, 2, '2026-04-09 10:00:00'), -- В работе
+(4, 1, '2026-04-09 12:00:00'), -- Создана
+(5, 1, '2026-04-11 08:00:00'); -- Создана
+
+-- ================== ФАЙЛЫ ==================
+INSERT INTO task_file (task_id, file_name, upload_dt) VALUES
+(1, 'auth_api_spec.yaml', '2026-04-06 12:00:00'),
+(2, 'mockup_main_page.png', '2026-04-07 16:30:00'),
+(3, 'deploy_pipeline.groovy', '2026-04-09 14:00:00');
+
+SET FOREIGN_KEY_CHECKS = 1;

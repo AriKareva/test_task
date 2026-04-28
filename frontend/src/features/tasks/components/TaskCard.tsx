@@ -1,12 +1,21 @@
-import { memo, ReactNode } from 'react';
-import { Task } from '../../tasks/types';
+import { memo } from 'react';
+// import { Task } from '../types';
+
+export interface Task {
+  task_id: number;
+  task_title: string;
+  description: string | null;
+  author_id: number;
+  assignee_id: number | null;
+  priority: number | null;
+  current_status?: string; 
+}
 
 interface TaskCardProps {
   task: Task;
-  children?: ReactNode;
 }
 
-const TaskCard = memo(function TaskCard({ task, children }: TaskCardProps) {
+const TaskCard = memo(function TaskCard({ task }: TaskCardProps) {
   return (
     <div className="task-card">
       <div className="task-card__title">{task.task_title}</div>
@@ -15,7 +24,6 @@ const TaskCard = memo(function TaskCard({ task, children }: TaskCardProps) {
         <span>Автор: {task.author_id}</span>
         {task.assignee_id && <span>Исполнитель: {task.assignee_id}</span>}
       </div>
-      {children && <div className="task-card__actions">{children}</div>}
     </div>
   );
 });

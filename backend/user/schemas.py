@@ -36,6 +36,8 @@ class UserSignIn(BaseModel):
 
 
 class AccessTokenResponse(BaseModel):
+    user_id: int  
+    login: str  
     access_token: str
     token_type: str = 'bearer'
 

@@ -5,8 +5,8 @@ interface AuthState {
   accessToken: string | null;
   userId: number | null;
   username: string | null;
-  login: (token: string, userId: number, username: string) => void;
-  logout: () => void;
+  login: (token: string, userId: number, username: string) => void;  
+  logout: () => void;                                     
 }
 
 export const useAuthStore = create<AuthState>()(

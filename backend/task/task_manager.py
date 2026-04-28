@@ -43,9 +43,16 @@ class TaskManager:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Задача с id={task_id} не найдена')
         return updated_task
 
-    def update_task_assignee(self, task_id: int, new_assignee_id: int) -> Task:
+    def update_task_assignee(self, task_id: int, new_assignee_id: int, user_id: int) -> Task:
+        task_author_id = self.rep.get(task_id=task_id)
+
+        # if not task_author_id == user_id:
+        #     raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f'Вы не можете изменить статус задачи, автором которой не являетесь')
+        
         updated_task = self.rep.update_assignee(task_id=task_id, new_assignee_id=new_assignee_id)
+        
         if not updated_task:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Задача с id={task_id} не найдена')
+        
         return updated_task
 

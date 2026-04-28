@@ -1,3 +1,4 @@
+from user.auth.password_manager import hash_password
 from user.models import User
 from user.schemas import UserCreate, UserUpdate
 from sqlalchemy import select
@@ -21,11 +22,16 @@ class UserRepository:
         return task
 
     def create(self, data: UserCreate) -> User:
-        new_task = User(**data.model_dump())
-        self.db.add(new_task)
+        hashed_password = hash_password(data.password)
+        new_user = User(
+            login=data.login,
+            password=hashed_password, 
+            email=data.email
+        )
+        self.db.add(new_user)
         self.db.commit()
-        self.db.refresh(new_task)
-        return new_task
+        self.db.refresh(new_user)
+        return new_user
 
     def delete(self, user_id: int) -> User | None:
         task = self.get(user_id=user_id)
