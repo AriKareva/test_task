@@ -49,6 +49,7 @@ create table tasks (
     task_id bigint primary key auto_increment,
     task_title varchar(255) unique not null,
     description text,
+    deadline datetime,
     author_id bigint not null,
 
     foreign key (author_id) references users(user_id) on delete cascade on update cascade
@@ -124,12 +125,12 @@ INSERT INTO priorities (priority_title) VALUES
 ('Критичный');
 
 -- ================== ЗАДАЧИ ==================
-INSERT INTO tasks (task_title, description, author_id) VALUES
-('Разработать API аутентификации', 'Реализовать JWT-токены и эндпоинты login/signup', 1),
-('Сверстать главную страницу', 'Адаптивная вёрстка с использованием React и CSS Grid', 2),
-('Настроить CI/CD', 'Написать пайплайн для автодеплоя на сервер', 1),
-('Рефакторинг модуля задач', 'Улучшить структуру кода и добавить тесты', 3),
-('Подготовить документацию', 'Описать API в Swagger', 2);
+INSERT INTO tasks (task_title, description, deadline, author_id) VALUES
+('Разработать API аутентификации', 'Реализовать JWT-токены и эндпоинты login/signup', null, 1),
+('Сверстать главную страницу', 'Адаптивная вёрстка с использованием React и CSS Grid',null, 2),
+('Настроить CI/CD', 'Написать пайплайн для автодеплоя на сервер', null, 1),
+('Рефакторинг модуля задач', 'Улучшить структуру кода и добавить тесты', null, 3),
+('Подготовить документацию', 'Описать API в Swagger', null, 2);
 
 -- ================== ИСПОЛНИТЕЛИ (текущие/исторические) ==================
 -- Для каждой задачи добавляем текущего исполнителя и предысторию

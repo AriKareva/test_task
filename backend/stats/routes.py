@@ -1,4 +1,4 @@
-from typing import Any, List
+from typing import Any, List, Optional
 from dependencies import get_stats_manager
 from stats.stats_manager import StatsManager
 from stats.schemas import ProductiveUsersFullResponse, StatusAvgTimeFullResponse, ProductiveUsersFullResponse
@@ -16,8 +16,8 @@ def get_status_avg_time(
 
 @router.get('/top-productive-users', response_model=List[ProductiveUsersFullResponse])
 def get_top_productive_users(
-    # limit: int = 3,
+    limit: Optional[int] = 3,
     manager: StatsManager = Depends(get_stats_manager)
 ):
-    return manager.get_formatted_top_productive_users(limit=3)
+    return manager.get_formatted_top_productive_users(limit=limit)
     

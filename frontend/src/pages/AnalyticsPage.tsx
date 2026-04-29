@@ -9,7 +9,7 @@ export default function AnalyticsPage() {
         <AvgTimeChart />
       </section>
       <section>
-        <h3>Топ‑3 продуктивных пользователей</h3>
+        <h3>Топ-3 продуктивных пользователей</h3>
         <TopUsersChart />
       </section>
     </div>

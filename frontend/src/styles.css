@@ -256,3 +256,49 @@ button {
   padding: 4px 8px;
   background-color: rgba(139, 92, 246, 0.1);
 }
+
+.task-card__status {
+  font-size: 13px;
+  color: #475569;
+  margin-top: 4px;
+  font-style: italic;
+}
+.task-card__deadline {
+  font-size: 13px;
+  color: #ef4444;
+  margin-top: 4px;
+}
+
+.task-card__priority {
+  font-size: 13px;
+  color: #475569;
+  margin-top: 4px;
+}
+
+/* Фильтры */
+.filters-bar {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+  align-items: center;
+}
+.filters-bar select {
+  padding: 10px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 15px;
+  background: #fff;
+  cursor: pointer;
+}
+
+/* Кнопка создания задачи */
+.create-task-btn {
+  margin-bottom: 16px;
+}
+
+.task-card__actions {
+  margin-top: 8px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}

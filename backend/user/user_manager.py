@@ -14,7 +14,7 @@ class UserManager:
     def get_user(self, user_id: int) -> User:
         task = self.rep.get(user_id=user_id)
         if not task:
-            raise HTTPException(status_code=status.HTTH_404_NOT_FOUND, detail=f'Пользователь с id={user_id} не найден')
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Пользователь с id={user_id} не найден')
         return task
 
     def list_users(self) -> List[User]:
@@ -36,19 +36,19 @@ class UserManager:
     def delete_user(self, user_id: int) -> User:
         deleted_task = self.rep.delete(user_id=user_id)
         if not deleted_task:
-            raise HTTPException(status_code=status.HTTH_404_NOT_FOUND, detail=f'Пользователь с id={user_id} не найден')
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Пользователь с id={user_id} не найден')
         return deleted_task
 
     def update_user(self, user_id: int, user_updates: UserUpdate) -> User:
         updated_task = self.rep.update(user_id=user_id, updates=user_updates)
         if not updated_task:
-            raise HTTPException(status_code=status.HTTH_404_NOT_FOUND, detail=f'Пользователь с id={user_id} не найден')
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Пользователь с id={user_id} не найден')
         return updated_task
 
     def signin(self, user_data: UserSignIn) -> AccessTokenResponse:
         user = self.rep.get_user_by_login(user_login=user_data.login)
         if not user:
-            raise HTTPException(status_code=status.HTTH_404_NOT_FOUND, detail=f'Пользователь с login={user_data.login} не найден')
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Пользователь с login={user_data.login} не найден')
         
         pass_verified = verify_password(user_data.password, user.password)
         if not pass_verified:

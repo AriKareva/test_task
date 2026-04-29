@@ -1,6 +1,6 @@
 from task.models import Task
-from typing import List
-from task.schemas import TaskFullResponse, TaskUpdate, TaskCreate
+from typing import Any, List
+from task.schemas import PriorityResponse, TaskFullResponse, TaskPriorityResponse, TaskStatusResponse, TaskUpdate, TaskCreate, StatusResponse
 from task.task_repository import TaskRepository
 from fastapi import HTTPException, status
 
@@ -15,7 +15,7 @@ class TaskManager:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Задача с id={task_id} не найдена')
         return task
 
-    def list_tasks(self) -> List[Task]:
+    def list_tasks(self) -> List[TaskFullResponse]:
         tasks = self.rep.list()
         return tasks
 
@@ -46,15 +46,11 @@ class TaskManager:
     def _assignee_exists(self, assignee: str) -> int | None:
         return self.rep.get_assignee_by_name(assignee_name=assignee)
     
-    def update_task_assignee(self, task_id: int, new_assignee: str, user_id: int) -> Task:
+    def update_task_assignee(self, task_id: int, new_assignee_id: int, user_id: int) -> Task:
         task_author_id = self.rep.get(task_id=task_id)
         # if not task_author_id == user_id:
         #     raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f'Вы не можете изменить исполниителя задачи, автором которой не являетесь')
-        
-        new_assignee_id = self._assignee_exists(assignee=new_assignee)
-        if not new_assignee_id:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Пользователь {new_assignee} с id={new_assignee_id} не найден')
-        
+
         updated_task = self.rep.update_assignee(task_id=task_id,new_assignee_id=new_assignee_id)
         if not updated_task:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Задача с id={task_id} не найдена')
@@ -64,11 +60,7 @@ class TaskManager:
     def _priority_exists(self, priority: str) -> int | None:
         return self.rep.get_priority_by_name(priority_name=priority)
     
-    def update_task_priority(self, task_id: int, new_priority: str) -> Task:
-        new_priority_id = self._priority_exists(priority=new_priority)
-        if not new_priority_id:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Неизвестный приоритет задачи {new_priority}')
-        
+    def update_task_priority(self, task_id: int, new_priority_id: int) -> Task:
         updated_task = self.rep.update_priority(task_id=task_id, new_priority_id=new_priority_id)
         
         if not updated_task:
@@ -79,14 +71,22 @@ class TaskManager:
     def _status_exists(self, status: str) -> int | None:
         return self.rep.get_status_by_name(status_name=status)
     
-    def update_task_status(self, task_id: int, new_status: str) -> Task:
-        new_status_id = self._status_exists(status=new_status)
-        if not new_status_id:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Неизвестный статус задачи {new_status}')
-        
+    def update_task_status(self, task_id: int, new_status_id: int) -> Task:
         updated_task = self.rep.update_status(task_id=task_id, new_status_id=new_status_id)
         if not updated_task:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Задача с id={task_id} не найдена')
         
         return updated_task
 
+    def get_statuses(self) -> List[StatusResponse]:
+        statuses = self.rep.get_statuses()
+        return [StatusResponse.model_validate(s) for s in statuses]
+
+    def get_priorities(self) -> List[PriorityResponse]:
+        return self.rep.get_priorities()
+
+    def get_status_history(self, task_id: int) -> List[TaskStatusResponse]:
+        return self.rep.get_status_history(task_id)
+
+    def get_priority_history(self, task_id: int) -> List[TaskPriorityResponse]:
+        return self.rep.get_priority_history(task_id)

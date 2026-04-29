@@ -29,6 +29,7 @@ class Task(Base):
     task_id = Column(BigInteger, primary_key=True, autoincrement=True)
     task_title = Column(String(255), unique=True, nullable=False)
     description = Column(Text, nullable=True)
+    deadline =  Column(DateTime, nullable=True)
     author_id = Column(BigInteger, ForeignKey('users.user_id', ondelete='CASCADE', onupdate='CASCADE'), nullable=False)
 
     author = relationship('User', foreign_keys=[author_id], back_populates='authored_tasks')

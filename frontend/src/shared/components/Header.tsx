@@ -27,13 +27,20 @@ export default function Header() {
             Мои задачи
           </Link>
         )}
+        <Link
+              to="/my-created-tasks"
+              className={isActive('/my-created-tasks') ? 'active' : ''}
+              aria-current={isActive('/my-created-tasks') ? 'page' : undefined}
+            >
+              Мои созданные
+        </Link>
         {token && (
           <Link
             to="/analytics"
             className={isActive('/analytics') ? 'active' : ''}
             aria-current={isActive('/analytics') ? 'page' : undefined}
           >
-            Аналитика
+            Статистика
           </Link>
         )}
       </nav>

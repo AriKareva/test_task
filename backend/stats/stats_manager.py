@@ -33,12 +33,9 @@ class StatsManager:
         return [
                     ProductiveUsersFullResponse(
                         login=item['login'],
-                        # days=int(item['completion_time_sec'] // 86400),
-                        # hours=int((item['completion_time_sec'] % 86400) // 3600),
-                        # minutes=int((item['completion_time_sec'] % 3600) // 60),
-                        days=int(item['completion_time_sec']),
-                        hours=int((item['completion_time_sec'])),
-                        minutes=int((item['completion_time_sec'])),
+                        days=int(item['completion_time_sec'] // 86400),
+                        hours=int((item['completion_time_sec'] % 86400) // 3600),
+                        minutes=int((item['completion_time_sec'] % 3600) // 60),
                         completion_time_sec=int(item['completion_time_sec'])
                     )
                     for item in top_productive_users

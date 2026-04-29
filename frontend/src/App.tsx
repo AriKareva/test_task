@@ -9,6 +9,7 @@ const MyTasksPage = lazy(() => import('./pages/MyTasksPage'));
 const AnalyticsPage = lazy(() => import('./pages/AnalyticsPage'));
 const LoginPage = lazy(() => import('./pages/LoginPage'));
 const RegisterPage = lazy(() => import('./pages/RegisterPage'));
+const MyCreatedTasksPage = lazy(() => import('./pages/MyCreatedTasksPage.tsx'));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -31,8 +32,9 @@ export default function App() {
               <Route element={<ProtectedRoute />}>
                 <Route path="/tasks" element={<AllTasksPage />} />
                 <Route path="/my-tasks" element={<MyTasksPage />} />
-                <Route path="/analytics" element={<AnalyticsPage />} />
                 <Route path="/" element={<Navigate to="/tasks" replace />} />
+                <Route path="/my-created-tasks" element={<MyCreatedTasksPage />} />
+                <Route path="/analytics" element={<AnalyticsPage />} />
               </Route>
             </Route>
           </Routes>

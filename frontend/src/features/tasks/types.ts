@@ -1,17 +1,23 @@
-// export interface Task {
-//   task_id: number | null;
-//   task_title: string | null;
-//   description: string | null;
-//   author_id: number | null;
-//   // current_status: string ;
-//   assignee_id: number | null;
-// }
+export interface TaskAssignee {
+  assignee_id: number;
+  assignee_login: string;
+  assignee_dt: string;
+}
+
+export interface TaskStatus {
+  status_id: number;
+  status_title: string;
+  status_dt: string;
+}
 
 export interface Task {
-  description?: string | null;
-  priority?: number | null;
-  assignee_id?: number | null;
-  author_id?: number | null;
-  task_id?: number | null;
-  task_title?: string | null;
+  task_id: number;
+  task_title: string;
+  description: string | null;
+  author_id: number;
+  author_login?: string | null;
+  cur_assignee: TaskAssignee | null;
+  current_status: TaskStatus | null;
+  priority?: string | null;
+  deadline?: string | null;
 }
