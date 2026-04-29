@@ -32,3 +32,4 @@ def decode_access_token(token: str) -> AccessTokenPayload | None:
     except JWTError as e:
         print("JWTError:", e)
         return None
+

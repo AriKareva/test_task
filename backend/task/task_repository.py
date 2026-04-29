@@ -14,6 +14,40 @@ class TaskRepository:
         task = self.db.query(Task).filter(Task.task_id == task_id).first()
         return task
 
+    def get_task_full(self, task_id: int) -> Optional[TaskFullResponse]:
+        task = self.get(task_id)
+        if not task:
+            return None
+
+        author = self.db.query(User).filter(User.user_id == task.author_id).first()
+        author_login = author.login if author else None
+
+        last_priority = (
+            self.db.query(TaskPriority.priority_id, Priority.priority_title)
+            .join(Priority, TaskPriority.priority_id == Priority.priority_id)
+            .filter(TaskPriority.task_id == task_id)
+            .order_by(TaskPriority.priority_dt.desc())
+            .first()
+        )
+        priority_id = last_priority[0] if last_priority else None
+        priority_title = last_priority[1] if last_priority else None
+
+        cur_assignee = self.get_current_assignee(task_id)
+        cur_status = self.get_current_status(task_id) 
+
+        return TaskFullResponse(
+            task_id=task.task_id,
+            task_title=task.task_title,
+            description=task.description,
+            deadline=task.deadline,
+            author_id=task.author_id,
+            author_login=author_login,
+            priority_id=priority_id,
+            priority_title=priority_title,
+            cur_assignee=cur_assignee,
+            current_status=cur_status
+        )
+
     def get_cur_task_assignee_id(self, task_id: int) -> int | None:
         latest_assignee = (
             self.db.query(TaskAssignee)
@@ -214,34 +248,31 @@ class TaskRepository:
         )
         return row[0] if row else None
   
-    def update_priority(self, task_id: int, new_priority_id: int) -> Task | None:
+    def update_priority(self, task_id: int, priority_id: int) -> TaskFullResponse | None:
         task = self.get(task_id=task_id)
         if not task:
             return None
 
         new_priority = TaskPriority(
             task_id=task_id,
-            priority_id=new_priority_id
+            priority_id=priority_id
         )
         self.db.add(new_priority)
         self.db.commit()
-        self.db.refresh(task)
-        return task
-    
-    def update_status(self, task_id: int, new_status_id: int) -> Task | None:
+        return self.get_task_full(task_id)
+
+    def update_status(self, task_id: int, new_status_id: int) -> TaskFullResponse | None:
         task = self.get(task_id=task_id)
         if not task:
             return None
-        
+
         new_status = TaskStatus(
             task_id=task_id,
             status_id=new_status_id
         )
-
         self.db.add(new_status)
         self.db.commit()
-        self.db.refresh(task)
-        return task
+        return self.get_task_full(task_id)
     
     def get_status_by_name(self, status_name: str) -> int | None:
         status = self.db.query(Status).filter(Status.status_title == status_name).first()

@@ -112,7 +112,7 @@ export const updateTaskAssignee = (taskId: number, assigneeId: number) =>
   axios.patch(`/tasks/${taskId}/assignee`, { assignee_id: assigneeId }).then(res => res.data);
 
 export const updateTaskStatus = (taskId: number, statusId: number) =>
-  axios.patch(`/tasks/${taskId}/status`, { new_status_id: statusId }).then(res => res.data);
+  axios.patch(`/tasks/${taskId}/status`, { status_id: statusId }).then(res => res.data);
 
 export interface User {
   user_id: number;

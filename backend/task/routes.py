@@ -50,16 +50,17 @@ def create_task(
 def update_task_prtiority(
     new_prtiority: PriorityUpdate,
     task_id: int,
-    user_id: int,
-    # cur_user: AccessTokenPayload = Depends(get_current_user),
+    # user_id: int,
+    cur_user: AccessTokenPayload = Depends(get_current_user),
     manager: TaskManager = Depends(get_task_manager)
 ):
-    return manager.update_task_priority(task_id=task_id, new_priority_id=new_prtiority.priority_id, user_id=user_id)
+    return manager.update_task_priority(task_id=task_id, priority_id=new_prtiority.priority_id, user_id=cur_user.user_id)
 
 @router.patch('/{task_id}/assignee', response_model=TaskResponse)
 def update_task_assignee(
     assignee: TaskAssigneeUpdate,
     task_id: int,
+    # user_id: int,
     cur_user: AccessTokenPayload = Depends(get_current_user),
     manager: TaskManager = Depends(get_task_manager)
 ):
@@ -69,10 +70,11 @@ def update_task_assignee(
 def update_task_status(
     new_status: StatusUpdate,
     task_id: int,
-    # cur_user: AccessTokenPayload = Depends(get_current_user),
+    # user_id: int,
+    cur_user: AccessTokenPayload = Depends(get_current_user),
     manager: TaskManager = Depends(get_task_manager)
 ):
-    return manager.update_task_status(task_id=task_id, new_status_id=new_status.status_id)
+    return manager.update_task_status(task_id=task_id, new_status_id=new_status.status_id, user_id=cur_user.user_id)
 
 @router.delete('/{task_id}', response_model=TaskResponse)
 def delete_task(
