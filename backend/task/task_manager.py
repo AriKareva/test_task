@@ -1,6 +1,7 @@
 from task.models import Task
 from typing import Any, List
-from task.schemas import PriorityResponse, TaskFullCreate, TaskFullResponse, TaskPriorityResponse, TaskStatusResponse, TaskUpdate, TaskCreate, StatusResponse
+from task.schemas import (PriorityResponse, TaskFullCreate, TaskFullResponse, 
+                          TaskPriorityResponse, TaskResponse, TaskStatusResponse, TaskUpdate, StatusResponse)
 from task.task_repository import TaskRepository
 from fastapi import HTTPException, status
 
@@ -50,10 +51,10 @@ class TaskManager:
     def get_task_assignee_id(self, task_id: int) -> int | None:
         return self.rep.get_cur_task_assignee_id(task_id=task_id)
 
-    def update_task_assignee(self, task_id: int, new_assignee_id: int, user_id: int) -> TaskFullResponse:
+    def update_task_assignee(self, task_id: int, new_assignee_id: int, user_id: int) -> TaskResponse:
         task_author_id = self.rep.get(task_id=task_id).author_id
-        if not task_author_id == user_id:
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f'Вы не можете изменить исполниителя задачи, автором которой не являетесь')
+        # if task_author_id != user_id:
+        #     raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f'Вы не можете изменить исполниителя задачи, автором которой не являетесь')
 
         updated_task = self.rep.update_assignee(task_id=task_id,new_assignee_id=new_assignee_id)
         if not updated_task:
@@ -65,7 +66,7 @@ class TaskManager:
         return self.rep.get_priority_by_name(priority_name=priority)
     
     def update_task_priority(self, task_id: int, priority_id: int,
-                            user_id: int) -> TaskFullResponse:
+                            user_id: int) -> TaskResponse:
         task = self.rep.get(task_id=task_id)
         if not task:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,

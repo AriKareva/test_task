@@ -2,9 +2,8 @@ from typing import Any, List
 from user.schemas import AccessTokenPayload
 from dependencies import get_current_user, get_task_manager
 from task.schemas import ( 
-    TaskCreate, TaskFullCreate, TaskFullResponse, 
-    TaskResponse, PriorityResponse, 
-    StatusResponse, TaskStatusResponse, 
+    TaskFullCreate, TaskFullResponse, PriorityResponse, 
+    StatusResponse, TaskResponse, TaskStatusResponse, 
     TaskPriorityResponse, TaskAssigneeUpdate,
     StatusUpdate, PriorityUpdate
 )
@@ -30,7 +29,7 @@ def get_tasks(
 ):
     return manager.list_tasks()
 
-@router.get('/{task_id}', response_model=TaskResponse)
+@router.get('/{task_id}', response_model=TaskFullResponse)
 def get_task(
     task_id: int,
     # user_id: int,
@@ -46,7 +45,7 @@ def create_task(
 ):
     return manager.create_task(task_data=task_data, author_id=cur_user.user_id)
 
-@router.patch('/{task_id}/priority', response_model=TaskResponse)
+@router.patch('/{task_id}/priority', response_model=TaskFullResponse)
 def update_task_prtiority(
     new_prtiority: PriorityUpdate,
     task_id: int,
@@ -66,7 +65,7 @@ def update_task_assignee(
 ):
     return manager.update_task_assignee(task_id=task_id, new_assignee_id=assignee.assignee_id, user_id=cur_user.user_id)
 
-@router.patch('/{task_id}/status', response_model=TaskResponse)
+@router.patch('/{task_id}/status', response_model=TaskFullResponse)
 def update_task_status(
     new_status: StatusUpdate,
     task_id: int,
@@ -76,7 +75,7 @@ def update_task_status(
 ):
     return manager.update_task_status(task_id=task_id, new_status_id=new_status.status_id, user_id=cur_user.user_id)
 
-@router.delete('/{task_id}', response_model=TaskResponse)
+@router.delete('/{task_id}', response_model=TaskFullResponse)
 def delete_task(
     task_id: int,
     manager: TaskManager = Depends(get_task_manager)
@@ -84,7 +83,7 @@ def delete_task(
     return manager.delete_task(task_id=task_id)
 
 
-@router.get('/{user_id}/created', response_model=List[TaskResponse])
+@router.get('/{user_id}/created', response_model=List[TaskFullResponse])
 def list_user_created_tasks(
     user_id: int,
     manager: TaskManager = Depends(get_task_manager)

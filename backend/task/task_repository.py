@@ -1,6 +1,6 @@
 from typing import Any, List, Optional
 from user.models import User
-from task.schemas import PriorityResponse, TaskAssigneeResponse, TaskCreate, TaskFullCreate, TaskPriorityResponse, TaskStatusResponse, TaskUpdate, TaskFullResponse
+from task.schemas import PriorityResponse, TaskAssigneeResponse, TaskCreate, TaskFullCreate, TaskPriorityResponse, TaskResponse, TaskStatusResponse, TaskUpdate, TaskFullResponse
 from task.models import Priority, Status, Task, TaskAssignee, TaskPriority, TaskStatus
 from sqlalchemy import func
 from sqlalchemy.orm import Session
@@ -248,7 +248,7 @@ class TaskRepository:
         )
         return row[0] if row else None
   
-    def update_priority(self, task_id: int, priority_id: int) -> TaskFullResponse | None:
+    def update_priority(self, task_id: int, priority_id: int) -> TaskResponse | None:
         task = self.get(task_id=task_id)
         if not task:
             return None

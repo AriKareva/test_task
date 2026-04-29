@@ -28,25 +28,19 @@ export default function MyCreatedTasksPage() {
 
   const deleteMutation = useMutation({
     mutationFn: deleteTask,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['myCreatedTasks'] });
-    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['myCreatedTasks'] }),
   });
 
   const assigneeMutation = useMutation({
     mutationFn: ({ taskId, assigneeId }: { taskId: number; assigneeId: number }) =>
       updateTaskAssignee(taskId, assigneeId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['myCreatedTasks'] });
-    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['myCreatedTasks'] }),
   });
 
   const priorityMutation = useMutation({
     mutationFn: ({ taskId, priorityId }: { taskId: number; priorityId: number }) =>
       updateTaskPriority(taskId, priorityId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['myCreatedTasks'] });
-    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['myCreatedTasks'] }),
   });
 
   if (!userId) return <div className="loading">Войдите в систему</div>;
@@ -55,6 +49,7 @@ export default function MyCreatedTasksPage() {
     <div className="task-card__actions">
       {/* Смена исполнителя */}
       <select
+        className="select"
         value={task.cur_assignee?.assignee_id ?? ''}
         onChange={(e) => {
           const newId = Number(e.target.value);
@@ -63,7 +58,6 @@ export default function MyCreatedTasksPage() {
           }
         }}
         onClick={(e) => e.stopPropagation()}
-        className="select"
       >
         <option value="">Не назначен</option>
         {users?.map(u => (
@@ -73,6 +67,7 @@ export default function MyCreatedTasksPage() {
 
       {/* Смена приоритета */}
       <select
+        className="select"
         value={task.priority_id ?? ''}
         onChange={(e) => {
           const newPriority = Number(e.target.value);
@@ -81,7 +76,6 @@ export default function MyCreatedTasksPage() {
           }
         }}
         onClick={(e) => e.stopPropagation()}
-        className="select"
       >
         <option value="">Без приоритета</option>
         {priorities?.map(p => (
