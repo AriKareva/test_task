@@ -75,7 +75,7 @@ def update_task_status(
 ):
     return manager.update_task_status(task_id=task_id, new_status_id=new_status.status_id, user_id=cur_user.user_id)
 
-@router.delete('/{task_id}', response_model=TaskFullResponse)
+@router.delete('/{task_id}', response_model=TaskResponse)
 def delete_task(
     task_id: int,
     manager: TaskManager = Depends(get_task_manager)

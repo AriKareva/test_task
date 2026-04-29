@@ -26,7 +26,9 @@ export default function TaskFilters({
       <select value={priorityFilter} onChange={e => onPriorityChange(e.target.value)}>
         <option value="Все">Все приоритеты</option>
         {priorities?.map(p => (
-          <option key={p.priority_id} value={p.priority_title}>{p.priority_title}</option>
+          <option key={p.priority_id} value={p.priority_id}>
+            {p.priority_title}
+          </option>
         ))}
       </select>
     </div>

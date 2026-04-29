@@ -51,9 +51,6 @@ export default function MyTasksPage() {
 
   return (
     <div>
-      <button className="btn btn--primary" onClick={() => setShowCreate(true)} style={{ marginBottom: 16 }}>
-        + Новая задача
-      </button>
       <TaskFilters
         statusFilter={statusFilter}
         priorityFilter={priorityFilter}

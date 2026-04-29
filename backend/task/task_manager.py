@@ -11,7 +11,7 @@ class TaskManager:
         self.rep = rep
 
     def get_task(self, task_id: int) -> TaskFullResponse:
-        task = self.rep.get(task_id=task_id)
+        task = self.rep.get_task_full(task_id=task_id)
         if not task:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Задача с id={task_id} не найдена')
         return task
@@ -32,7 +32,7 @@ class TaskManager:
         new_task = self.rep.create(data=task_data, author_id=author_id)
         return new_task
 
-    def delete_task(self, task_id: int) -> Task:
+    def delete_task(self, task_id: int) -> Task | None:
         task = self.rep.get(task_id)
         if not task:
             raise HTTPException(status_code=404, detail="Задача не найдена")
@@ -53,14 +53,20 @@ class TaskManager:
 
     def update_task_assignee(self, task_id: int, new_assignee_id: int, user_id: int) -> TaskResponse:
         task_author_id = self.rep.get(task_id=task_id).author_id
-        # if task_author_id != user_id:
-        #     raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f'Вы не можете изменить исполниителя задачи, автором которой не являетесь')
+        if task_author_id != user_id:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, 
+                                detail=f'Вы не можете изменить исполниителя задачи, автором которой не являетесь')
 
         updated_task = self.rep.update_assignee(task_id=task_id,new_assignee_id=new_assignee_id)
         if not updated_task:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Задача с id={task_id} не найдена')
         
-        return updated_task
+        # сбрасываем статус
+        created_status_id = self.rep.get_status_by_name('Создана')
+        if created_status_id is not None:
+            self.rep.update_status(task_id=task_id, new_status_id=created_status_id)
+
+        return self.rep.get_task_full(task_id)
     
     def _priority_exists(self, priority: str) -> int | None:
         return self.rep.get_priority_by_name(priority_name=priority)
@@ -73,9 +79,9 @@ class TaskManager:
                                 detail='Задача не найдена')
 
         # Только автор может менять приоритет
-        # if task.author_id != user_id:
-        #     raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
-        #                         detail='Только автор может изменить приоритет')
+        if task.author_id != user_id:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                                detail='Только автор может изменить приоритет')
 
         updated_task = self.rep.update_priority(task_id=task_id,
                                                 priority_id=priority_id)
@@ -90,11 +96,11 @@ class TaskManager:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                                 detail='Задача не найдена')
 
-        # автор или текущий исполнитель могут менять статус
+        # Только текущий исполнитель может менять статус
         current_assignee_id = self.get_task_assignee_id(task_id=task_id)
-        # if task.author_id != user_id and current_assignee_id != user_id:
-        #     raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
-        #                         detail='У вас нет прав на изменение статуса')
+        if current_assignee_id != user_id:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                                detail='У вас нет прав на изменение статуса')
 
         updated_task = self.rep.update_status(task_id=task_id,
                                             new_status_id=new_status_id)

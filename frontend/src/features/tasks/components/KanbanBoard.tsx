@@ -96,13 +96,13 @@ export default function KanbanBoard({
   if (statusFilter !== 'Все')
     filteredTasks = filteredTasks.filter(t => (t.current_status?.status_title ?? 'Без статуса') === statusFilter);
   if (priorityFilter !== 'Все')
-    filteredTasks = filteredTasks.filter(t => (t.priority ?? '') === priorityFilter);
-
+    filteredTasks = filteredTasks.filter(
+      t => String(t.priority_id ?? '') === String(priorityFilter)
+    );
   const columns = statuses.map(status => ({
     statusTitle: status.status_title,
     tasks: filteredTasks.filter(t => (t.current_status?.status_title ?? 'Без статуса') === status.status_title),
   }));
-
   return (
     <div className="kanban-board">
       {columns.map(col => (

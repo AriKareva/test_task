@@ -1,6 +1,6 @@
-from typing import Any, List, Optional
+from typing import List, Optional
 from user.models import User
-from task.schemas import PriorityResponse, TaskAssigneeResponse, TaskCreate, TaskFullCreate, TaskPriorityResponse, TaskResponse, TaskStatusResponse, TaskUpdate, TaskFullResponse
+from task.schemas import PriorityResponse, TaskAssigneeResponse, TaskCreate, TaskPriorityResponse, TaskResponse, TaskStatusResponse, TaskUpdate, TaskFullResponse
 from task.models import Priority, Status, Task, TaskAssignee, TaskPriority, TaskStatus
 from sqlalchemy import func
 from sqlalchemy.orm import Session
@@ -33,7 +33,7 @@ class TaskRepository:
         priority_title = last_priority[1] if last_priority else None
 
         cur_assignee = self.get_current_assignee(task_id)
-        cur_status = self.get_current_status(task_id) 
+        cur_status = self.get_current_status(task_id)
 
         return TaskFullResponse(
             task_id=task.task_id,
@@ -57,7 +57,6 @@ class TaskRepository:
         )
         if not latest_assignee:
             return None
-        
         return latest_assignee.assignee_id
 
     def get_current_assignee(self, task_id: int) -> Optional[TaskAssigneeResponse]:
@@ -104,24 +103,29 @@ class TaskRepository:
         return row[0] if row else None
 
     def list(self, assignee_id: Optional[int] = None, author_id: Optional[int] = None) -> List[TaskFullResponse]:
-        latest_assignee_subq = (
-            self.db.query(
-                TaskAssignee.task_id,
-                func.max(TaskAssignee.task_assignee_id).label('max_id')
+        task_ids_query = self.db.query(Task.task_id)
+
+        if author_id is not None:
+            task_ids_query = task_ids_query.filter(Task.author_id == author_id)
+
+        if assignee_id is not None:
+            latest_assignee_subq = (
+                self.db.query(
+                    TaskAssignee.task_id,
+                    func.max(TaskAssignee.task_assignee_id).label('max_id')
+                )
+                .group_by(TaskAssignee.task_id)
+                .subquery()
             )
-            .group_by(TaskAssignee.task_id)
-            .subquery()
-        )
+            task_ids_query = task_ids_query.join(
+                latest_assignee_subq,
+                Task.task_id == latest_assignee_subq.c.task_id
+            ).join(
+                TaskAssignee,
+                TaskAssignee.task_assignee_id == latest_assignee_subq.c.max_id
+            ).filter(TaskAssignee.assignee_id == assignee_id)
 
-        query = self.db.query(TaskAssignee.task_id).join(
-            latest_assignee_subq,
-            TaskAssignee.task_assignee_id == latest_assignee_subq.c.max_id
-        )
-
-        if assignee_id:
-            query = query.filter(TaskAssignee.assignee_id == assignee_id)
-
-        task_ids = [t[0] for t in query.all()]
+        task_ids = [t[0] for t in task_ids_query.all()]
         if not task_ids:
             return []
 
@@ -136,7 +140,8 @@ class TaskRepository:
                 task_id=task.task_id,
                 task_title=task.task_title,
                 description=task.description,
-                priority=self.get_current_priority_id(task.task_id),
+                priority_id=self.get_current_priority_id(task.task_id),
+                priority_title=self._get_priority_title(task.task_id),
                 author_id=task.author_id,
                 author_login=author_login,
                 cur_assignee=self.get_current_assignee(task.task_id),
@@ -144,11 +149,11 @@ class TaskRepository:
                 deadline=task.deadline
             ))
         return result
-    
+
     def user_created_list(self, user_id: int) -> List[TaskFullResponse]:
         user_tasks = self.list(author_id=user_id)
         return user_tasks
-    
+
     def user_assigned_list(self, assignee_id: int) -> List[TaskFullResponse]:
         assignee_tasks = self.list(assignee_id=assignee_id)
         return assignee_tasks
@@ -180,7 +185,6 @@ class TaskRepository:
         self.db.add(task)
         self.db.flush()
 
-        # исполнитель либо переданный assignee_id, либо автор
         assignee_id = getattr(data, 'assignee_id', None) or author_id
         task_assignee = TaskAssignee(
             task_id=task.task_id,
@@ -195,7 +199,6 @@ class TaskRepository:
             )
             self.db.add(task_priority)
 
-        # статус "Создана"
         created_status = self.db.query(Status).filter(Status.status_title == 'Создана').first()
         if created_status:
             task_status = TaskStatus(
@@ -205,7 +208,7 @@ class TaskRepository:
             self.db.add(task_status)
 
         self.db.commit()
-    
+
         return TaskFullResponse(
             task_id=task.task_id,
             task_title=task.task_title,
@@ -219,12 +222,13 @@ class TaskRepository:
             current_status=self.get_current_status(task.task_id)
         )
 
-    def delete(self, task_id: int) -> None:
+    def delete(self, task_id: int) -> None | Task:
         task = self.db.query(Task).filter(Task.task_id == task_id).first()
         if not task:
             return None
         self.db.delete(task)
         self.db.commit()
+        return task
 
     def update(self, task_id: int, updates: TaskUpdate) -> Task | None:
         task = self.get(task_id=task_id)
@@ -247,7 +251,7 @@ class TaskRepository:
             .first()
         )
         return row[0] if row else None
-  
+
     def update_priority(self, task_id: int, priority_id: int) -> TaskResponse | None:
         task = self.get(task_id=task_id)
         if not task:
@@ -273,26 +277,24 @@ class TaskRepository:
         self.db.add(new_status)
         self.db.commit()
         return self.get_task_full(task_id)
-    
+
     def get_status_by_name(self, status_name: str) -> int | None:
         status = self.db.query(Status).filter(Status.status_title == status_name).first()
         if not status:
             return None
-        
         return status.status_id
 
     def get_priority_by_name(self, priority_name: str) -> int | None:
         priority = self.db.query(Priority).filter(Priority.priority_title == priority_name).first()
         if not priority:
             return None
-        
         return priority.priority_id
 
     def update_assignee(self, task_id: int, new_assignee_id: int) -> Task | None:
         task = self.get(task_id=task_id)
         if not task:
             return None
-        
+
         new_assignee = TaskAssignee(
             task_id=task_id,
             assignee_id=new_assignee_id
@@ -302,18 +304,17 @@ class TaskRepository:
         self.db.commit()
         self.db.refresh(task)
         return task
-    
+
     def get_assignee_by_name(self, assignee_name: str) -> int | None:
         assignee = self.db.query(User).filter(User.login == assignee_name).first()
         if not assignee:
             return None
-        
         return assignee.user_id
-    
-    def get_statuses(self) -> List[Status]: 
+
+    def get_statuses(self) -> List[Status]:
         statuses = self.db.query(Status).all()
         return statuses
-    
+
     def get_priorities(self) -> List[PriorityResponse]:
         priorities = self.db.query(Priority).all()
         return [PriorityResponse.model_validate(p) for p in priorities]
