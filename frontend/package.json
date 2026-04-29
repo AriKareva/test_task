@@ -17,7 +17,8 @@
     "axios": "^1.7.2",
     "react-hook-form": "^7.51.5",
     "@hookform/resolvers": "^3.6.0",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "recharts": "^2.10.3"
   },
   "devDependencies": {
     "@types/react": "^18.3.1",
