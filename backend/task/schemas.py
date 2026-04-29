@@ -11,7 +11,7 @@ class PriorityBase(BaseModel):
         from_attributes = True
 
 class PriorityUpdate(BaseModel):
-    priority_id: int
+    priority_id: Optional[int] = None
 
 class PriorityResponse(PriorityBase):
     ...
@@ -63,14 +63,15 @@ class TaskStatusResponse(TaskStatusBase):
 
 
 class TaskBase(BaseModel):
-    task_title: Optional[str] = None
+    task_title: str
     description: Optional[str] = None
 
     class Config:
         from_attributes = True
 
-class TaskCreate(TaskBase):
-    ...
+class TaskCreate(BaseModel):
+    deadline: Optional[datetime] = None
+    priority_id: Optional[int] = None
 
 class TaskUpdate(TaskBase):
     ...
@@ -87,17 +88,22 @@ class TaskFullBase(BaseModel):
     task_title: str
     description: Optional[str] = None
     deadline: Optional[datetime] = None
-    author_id: int
-    author_login: str
-    cur_assignee: Optional[TaskAssigneeResponse] = None
+    priority_id: Optional[int] = None
     current_status: TaskStatusResponse
 
     class Config:
         from_attributes = True
 
+class TaskFullCreate(TaskFullBase):
+    task_id: Optional[int] = None
+    assignee_id: Optional[int] = None 
+    current_status: Optional[TaskStatusResponse] = None 
 
 class TaskFullResponse(TaskFullBase):
-    ...
+    priority_title: Optional[str] = None
+    cur_assignee: Optional[TaskAssigneeResponse] = None
+    author_id: int
+    author_login: str
 
 
 class TaskPriorityBase(BaseModel):

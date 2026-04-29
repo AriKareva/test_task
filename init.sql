@@ -88,16 +88,6 @@ create table task_status (
     foreign key (status_id) references statuses(status_id) on delete cascade on update restrict
 );
 
-drop table if exists task_file;
-create table task_file (
-    task_file_id bigint primary key auto_increment,
-    task_id bigint not null,
-    file_name varchar(255) not null,
-    upload_dt datetime not null default current_timestamp,
-
-    foreign key (task_id) references tasks(task_id) on delete cascade on update cascade
-);
-
 -- ============================================
 -- Мок-данные для сервиса задач
 -- Совместимо с MySQL 8.0, кодировка utf8mb4
@@ -170,10 +160,5 @@ INSERT INTO task_status (task_id, status_id, status_dt) VALUES
 (4, 1, '2026-04-09 12:00:00'), -- Создана
 (5, 1, '2026-04-11 08:00:00'); -- Создана
 
--- ================== ФАЙЛЫ ==================
-INSERT INTO task_file (task_id, file_name, upload_dt) VALUES
-(1, 'auth_api_spec.yaml', '2026-04-06 12:00:00'),
-(2, 'mockup_main_page.png', '2026-04-07 16:30:00'),
-(3, 'deploy_pipeline.groovy', '2026-04-09 14:00:00');
 
 SET FOREIGN_KEY_CHECKS = 1;

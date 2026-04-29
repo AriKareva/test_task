@@ -2,7 +2,7 @@ from typing import Any, List
 from user.schemas import AccessTokenPayload
 from dependencies import get_current_user, get_task_manager
 from task.schemas import ( 
-    TaskCreate, TaskFullResponse, 
+    TaskCreate, TaskFullCreate, TaskFullResponse, 
     TaskResponse, PriorityResponse, 
     StatusResponse, TaskStatusResponse, 
     TaskPriorityResponse, TaskAssigneeUpdate,
@@ -38,24 +38,23 @@ def get_task(
 ):
     return manager.get_task(task_id=task_id)
     
-
-@router.post('/', response_model=TaskResponse)
+@router.post('/', response_model=TaskFullResponse)
 def create_task(
-    task_data: TaskCreate,
+    task_data: TaskFullCreate,
     cur_user: AccessTokenPayload = Depends(get_current_user),
     manager: TaskManager = Depends(get_task_manager)
 ):
     return manager.create_task(task_data=task_data, author_id=cur_user.user_id)
 
-
 @router.patch('/{task_id}/priority', response_model=TaskResponse)
 def update_task_prtiority(
     new_prtiority: PriorityUpdate,
     task_id: int,
-    cur_user: AccessTokenPayload = Depends(get_current_user),
+    user_id: int,
+    # cur_user: AccessTokenPayload = Depends(get_current_user),
     manager: TaskManager = Depends(get_task_manager)
 ):
-    return manager.update_task_priority(task_id=task_id, new_priority_id=new_prtiority.priority_id)
+    return manager.update_task_priority(task_id=task_id, new_priority_id=new_prtiority.priority_id, user_id=user_id)
 
 @router.patch('/{task_id}/assignee', response_model=TaskResponse)
 def update_task_assignee(
@@ -74,7 +73,6 @@ def update_task_status(
     manager: TaskManager = Depends(get_task_manager)
 ):
     return manager.update_task_status(task_id=task_id, new_status_id=new_status.status_id)
-
 
 @router.delete('/{task_id}', response_model=TaskResponse)
 def delete_task(

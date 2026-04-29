@@ -83,10 +83,9 @@ export const fetchUserAssignedTasks = (userId: number) =>
 
 
 // Удаление
-export const deleteTask = (
-    taskId: number
-) =>
+export const deleteTask = (taskId: number) =>
   axios.delete(`/tasks/${taskId}`).then(res => res.data);
+
 
 export const fetchStatuses = () =>
     axios.get<StatusItem[]>('/tasks/statuses').then(res => res.data);
@@ -100,7 +99,6 @@ export interface PriorityItem {
 export const fetchPriorities = () =>
   axios.get<PriorityItem[]>('/tasks/priorities').then(res => res.data);
 
-
 export const fetchTaskStatusHistory = (taskId: number) =>
   axios.get<StatusHistoryEntry[]>(`/tasks/${taskId}/status-history`).then(res => res.data);
 
@@ -108,10 +106,13 @@ export const fetchTaskPriorityHistory = (taskId: number) =>
   axios.get<PriorityHistoryEntry[]>(`/tasks/${taskId}/priority-history`).then(res => res.data);
 
 export const updateTaskPriority = (taskId: number, priorityId: number) =>
-  axios.patch<Task>(`/tasks/${taskId}/priority`, { priority_id: priorityId }).then(res => res.data);
+  axios.patch(`/tasks/${taskId}/priority`, { priority_id: priorityId }).then(res => res.data);
 
 export const updateTaskAssignee = (taskId: number, assigneeId: number) =>
   axios.patch(`/tasks/${taskId}/assignee`, { assignee_id: assigneeId }).then(res => res.data);
+
+export const updateTaskStatus = (taskId: number, statusId: number) =>
+  axios.patch(`/tasks/${taskId}/status`, { new_status_id: statusId }).then(res => res.data);
 
 export interface User {
   user_id: number;

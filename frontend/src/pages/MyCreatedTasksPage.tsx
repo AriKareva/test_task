@@ -23,11 +23,9 @@ export default function MyCreatedTasksPage() {
 
   const queryClient = useQueryClient();
 
-  // Загрузка пользователей и приоритетов для выпадающих списков
   const { data: users } = useQuery({ queryKey: ['users'], queryFn: fetchUsers });
   const { data: priorities } = useQuery({ queryKey: ['priorities'], queryFn: fetchPriorities });
 
-  // Мутации
   const deleteMutation = useMutation({
     mutationFn: deleteTask,
     onSuccess: () => {
@@ -74,7 +72,7 @@ export default function MyCreatedTasksPage() {
 
       {/* Смена приоритета */}
       <select
-        value={task.priority ?? ''}
+        value={task.priority_id ?? ''}
         onChange={(e) => {
           const newPriority = Number(e.target.value);
           if (newPriority) {
@@ -91,7 +89,7 @@ export default function MyCreatedTasksPage() {
 
       {/* Удаление */}
       <button
-        className="btn btn--danger"
+        className="btn btn--primary"
         onClick={(e) => {
           e.stopPropagation();
           if (confirm('Удалить задачу?')) {

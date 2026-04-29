@@ -33,17 +33,17 @@ class Task(Base):
     author_id = Column(BigInteger, ForeignKey('users.user_id', ondelete='CASCADE', onupdate='CASCADE'), nullable=False)
 
     author = relationship('User', foreign_keys=[author_id], back_populates='authored_tasks')
-    assignee_history = relationship('TaskAssignee', back_populates='task')
-    priority_history = relationship('TaskPriority', back_populates='task')
-    status_history = relationship('TaskStatus', back_populates='task')
-    files = relationship('TaskFile', back_populates='task')
+    assignee_history = relationship("TaskAssignee", back_populates="task", cascade="all, delete-orphan", passive_deletes=True)
+    priority_history = relationship('TaskPriority', back_populates='task', cascade="all, delete-orphan", passive_deletes=True)
+    status_history = relationship('TaskStatus', back_populates='task', cascade="all, delete-orphan", passive_deletes=True)
+    # files = relationship('TaskFile', back_populates='task')
 
 
 class TaskAssignee(Base):
     __tablename__ = 'task_assignee'
 
     task_assignee_id = Column(BigInteger, primary_key=True, autoincrement=True)
-    task_id = Column(BigInteger, ForeignKey('tasks.task_id', ondelete='CASCADE', onupdate='CASCADE'), nullable=False)
+    task_id = Column(BigInteger, ForeignKey("tasks.task_id", ondelete="CASCADE"), nullable=False)
     assignee_id = Column(BigInteger, ForeignKey('users.user_id', ondelete='SET NULL', onupdate='SET NULL'), nullable=True)
     assignee_dt = Column(DateTime, nullable=False, server_default=func.current_timestamp())
 
@@ -75,12 +75,12 @@ class TaskStatus(Base):
     status = relationship('Status', back_populates='task_statuses')
 
 
-class TaskFile(Base):
-    __tablename__ = 'task_file'
+# class TaskFile(Base):
+#     __tablename__ = 'task_file'
 
-    task_file_id = Column(BigInteger, primary_key=True, autoincrement=True)
-    task_id = Column(BigInteger, ForeignKey('tasks.task_id', ondelete='CASCADE', onupdate='CASCADE'), nullable=False)
-    file_name = Column(String(255), nullable=False)
-    upload_dt = Column(DateTime, nullable=False, server_default=func.current_timestamp())
+#     task_file_id = Column(BigInteger, primary_key=True, autoincrement=True)
+#     task_id = Column(BigInteger, ForeignKey('tasks.task_id', ondelete='CASCADE', onupdate='CASCADE'), nullable=False)
+#     file_name = Column(String(255), nullable=False)
+#     upload_dt = Column(DateTime, nullable=False, server_default=func.current_timestamp())
 
-    task = relationship('Task', back_populates='files')
+#     task = relationship('Task', back_populates='files')
