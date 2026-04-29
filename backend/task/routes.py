@@ -1,7 +1,7 @@
 from typing import List
 from user.schemas import AccessTokenPayload
 from dependencies import get_current_user, get_task_manager
-from task.schemas import TaskCreate, TaskResponse, TaskUpdate
+from task.schemas import TaskCreate, TaskFullResponse, TaskResponse, TaskUpdate
 from task.task_manager import TaskManager
 from fastapi import APIRouter, Depends
 
@@ -33,22 +33,33 @@ def create_task(
     return manager.create_task(task_data=task_data, author_id=cur_user.user_id)
 
 
-# @router.patch('/{task_id}', response_model=TaskResponse)
-# def update_task(
-#     updates: TaskUpdate,
-#     task_id: int,
-#     manager: TaskManager = Depends(get_task_manager)
-# ):
-#     return manager.update_task(task_id=task_id, task_updates=updates)
-
-@router.patch('/{task_id}', response_model=TaskResponse)
-def update_task_assignee(
-    new_assignee_id: int,
+@router.patch('/{task_id}/priority', response_model=TaskResponse)
+def update_task_prtiority(
+    new_prtiority: str,
     task_id: int,
     cur_user: AccessTokenPayload = Depends(get_current_user),
     manager: TaskManager = Depends(get_task_manager)
 ):
-    return manager.update_task_assignee(task_id=task_id, new_assignee_id=new_assignee_id, user_id=cur_user.user_id)
+    return manager.update_task_priority(task_id=task_id, new_priority=new_prtiority)
+
+@router.patch('/{task_id}/assignee', response_model=TaskResponse)
+def update_task_assignee(
+    new_assignee: str,
+    task_id: int,
+    cur_user: AccessTokenPayload = Depends(get_current_user),
+    manager: TaskManager = Depends(get_task_manager)
+):
+    return manager.update_task_assignee(task_id=task_id, new_assignee=new_assignee, user_id=cur_user.user_id)
+
+@router.patch('/{task_id}/status', response_model=TaskResponse)
+def update_task_status(
+    new_status: str,
+    task_id: int,
+    # cur_user: AccessTokenPayload = Depends(get_current_user),
+    manager: TaskManager = Depends(get_task_manager)
+):
+    return manager.update_task_status(task_id=task_id, new_status=new_status)
+
 
 @router.delete('/{task_id}', response_model=TaskResponse)
 def delete_task(
@@ -66,7 +77,7 @@ def list_user_created_tasks(
     return manager.list_user_created_tasks(user_id=user_id)
 
 
-@router.get('/{user_id}/assigned', response_model=List[TaskResponse])
+@router.get('/{user_id}/assigned', response_model=List[TaskFullResponse])
 def list_user_assigned_tasks(
     user_id: int,
     manager: TaskManager = Depends(get_task_manager)

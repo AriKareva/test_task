@@ -6,7 +6,7 @@ import ProtectedRoute from './shared/components/ProtectedRoute';
 
 const AllTasksPage = lazy(() => import('./pages/AllTasksPage'));
 const MyTasksPage = lazy(() => import('./pages/MyTasksPage'));
-// const AnalyticsPage = lazy(() => import('./pages/AnalyticsPage'));s
+const AnalyticsPage = lazy(() => import('./pages/AnalyticsPage'));
 const LoginPage = lazy(() => import('./pages/LoginPage'));
 const RegisterPage = lazy(() => import('./pages/RegisterPage'));
 
@@ -31,7 +31,7 @@ export default function App() {
               <Route element={<ProtectedRoute />}>
                 <Route path="/tasks" element={<AllTasksPage />} />
                 <Route path="/my-tasks" element={<MyTasksPage />} />
-                {/* <Route path="/analytics" element={<AnalyticsPage />} /> */}
+                <Route path="/analytics" element={<AnalyticsPage />} />
                 <Route path="/" element={<Navigate to="/tasks" replace />} />
               </Route>
             </Route>

@@ -5,7 +5,7 @@ from dependencies import get_current_user, get_user_manager
 from fastapi import APIRouter, Depends
 
 
-router = APIRouter(prefix='/user', tags=['user'])
+router = APIRouter(prefix='/users', tags=['users'])
 
 @router.get('/', response_model=List[UserResponse])
 def get_users(

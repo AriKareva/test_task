@@ -1,3 +1,5 @@
+from stats.stats_manager import StatsManager
+from stats.stats_repository import StatsRepository
 from user.auth.jwt_tokens_manager import decode_access_token
 from user.schemas import AccessTokenPayload
 from task.task_repository import TaskRepository
@@ -21,6 +23,11 @@ def get_task_manager(db: Session = Depends(get_db)) -> TaskManager:
 def get_user_manager(db: Session = Depends(get_db)) -> UserManager:
     rep = UserRepository(db)
     return UserManager(rep)
+
+def get_stats_manager(db: Session = Depends(get_db)) -> StatsManager:
+    rep = StatsRepository(db)
+    return StatsManager(rep)
+
 
 bearer = HTTPBearer()
 

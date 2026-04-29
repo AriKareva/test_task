@@ -13,13 +13,10 @@ export default function MyTasksPage() {
 
   return (
     <div>
-      <button className="btn btn--primary" onClick={() => setShowCreate(true)}>
-        + Новая задача
-      </button>
       <KanbanBoard
         queryKey="myTasks"
         queryFn={() => fetchUserAssignedTasks(userId)}
-        emptyMessage="У вас пока нет задач"
+        emptyMessage="Нет задач"
       />
       {showCreate && <CreateTaskModal onClose={() => setShowCreate(false)} />}
     </div>
