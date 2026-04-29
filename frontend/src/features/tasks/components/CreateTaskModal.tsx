@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { createTask, fetchUsers } from '../../../api/tasks';
+import { createTask, fetchUsers, fetchPriorities } from '../../../api/tasks';
 import Modal from '../../../shared/components/Modal';
 import { useAuthStore } from '../../../features/auth/store/authStore';
 
@@ -33,6 +33,7 @@ export default function CreateTaskModal({ onClose }: CreateTaskModalProps) {
   const queryClient = useQueryClient();
 
   const { data: users } = useQuery({ queryKey: ['users'], queryFn: fetchUsers });
+  const { data: priorities } = useQuery({ queryKey: ['priorities'], queryFn: fetchPriorities });
 
   const mutation = useMutation({
     mutationFn: (data: FormData) =>
@@ -41,7 +42,7 @@ export default function CreateTaskModal({ onClose }: CreateTaskModalProps) {
         description: data.description || null,
         deadline: data.deadline ? new Date(data.deadline).toISOString() : null,
         priority_id: data.priority_id || null,
-        assignee_id: selectedAssigneeId,  
+        assignee_id: selectedAssigneeId,
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['myCreatedTasks'] });
@@ -78,10 +79,9 @@ export default function CreateTaskModal({ onClose }: CreateTaskModalProps) {
           <label className="label">Приоритет</label>
           <select {...register('priority_id', { valueAsNumber: true })} className="select">
             <option value="">Не выбран</option>
-            <option value={1}>Низкий</option>
-            <option value={2}>Средний</option>
-            <option value={3}>Высокий</option>
-            <option value={4}>Критичный</option>
+            {priorities?.map(p => (
+              <option key={p.priority_id} value={p.priority_id}>{p.priority_title}</option>
+            ))}
           </select>
         </div>
 

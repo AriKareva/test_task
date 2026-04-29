@@ -63,6 +63,7 @@ export default function MyCreatedTasksPage() {
           }
         }}
         onClick={(e) => e.stopPropagation()}
+        className="select"
       >
         <option value="">Не назначен</option>
         {users?.map(u => (
@@ -80,6 +81,7 @@ export default function MyCreatedTasksPage() {
           }
         }}
         onClick={(e) => e.stopPropagation()}
+        className="select"
       >
         <option value="">Без приоритета</option>
         {priorities?.map(p => (

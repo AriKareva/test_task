@@ -31,6 +31,7 @@ export default function MyTasksPage() {
   const renderActions = (task: Task) => (
     <div className="task-card__actions">
       <select
+        className="select"
         value={task.current_status?.status_id ?? ''}
         onChange={(e) => {
           const newStatusId = Number(e.target.value);
@@ -50,6 +51,9 @@ export default function MyTasksPage() {
 
   return (
     <div>
+      <button className="btn btn--primary" onClick={() => setShowCreate(true)} style={{ marginBottom: 16 }}>
+        + Новая задача
+      </button>
       <TaskFilters
         statusFilter={statusFilter}
         priorityFilter={priorityFilter}
